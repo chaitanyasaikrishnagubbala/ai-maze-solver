@@ -2,31 +2,31 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [rows, setRows] = useState(5);
-  const [cols, setCols] = useState(5);
+  const [rows,setRows]=useState(5);
+  const [cols,setCols]=useState(5);
 
-  const [grid, setGrid] = useState(
-    Array.from({ length: 5 }, () => Array(5).fill(0))
+  const [grid,setGrid]=useState(
+    Array.from({length:5},()=>Array(5).fill(0))
   );
 
-  const [start, setStart] = useState(null);
-  const [destination, setDestination] = useState(null);
+  const [start,setStart]=useState(null);
+  const [destination,setDestination]=useState(null);
 
-  const [mode, setMode] = useState("wall");
+  const [mode,setMode]=useState("wall");
 
-  const [visited, setVisited] = useState([]);
-  const [path, setPath] = useState([]);
+  const [visited,setVisited]=useState([]);
+  const [path,setPath]=useState([]);
 
-  const [running, setRunning] = useState(false);
-  const [message, setMessage] = useState("");
+  const [running,setRunning]=useState(false);
+  const [message,setMessage]=useState("");
 
-  const createGrid = () => {
-    const r = Math.min(Math.max(Number(rows), 2), 10);
-    const c = Math.min(Math.max(Number(cols), 2), 10);
+  const createGrid=()=>{
+    const r=Math.min(Math.max(Number(rows),2),10);
+    const c=Math.min(Math.max(Number(cols),2),10);
 
     setRows(r);
     setCols(c);
-    setGrid(Array.from({ length: r }, () => Array(c).fill(0)));
+    setGrid(Array.from({length:r},()=>Array(c).fill(0)));
 
     setStart(null);
     setDestination(null);
@@ -35,43 +35,43 @@ function App() {
     setMessage("");
   };
 
-  const handleCellClick = (row, col) => {
-    if (running) return;
+  const handleCellClick=(row,col)=>{
+    if(running)return;
 
-    if (mode === "start") {
-      if (destination?.row === row && destination?.col === col) return;
+    if(mode==="start"){
+      if(destination?.row===row&&destination?.col===col)return;
 
-      setStart({ row, col });
+      setStart({row,col});
 
-      setGrid((prev) => {
-        const copy = prev.map((r) => [...r]);
-        copy[row][col] = 0;
+      setGrid(prev=>{
+        const copy=prev.map(r=>[...r]);
+        copy[row][col]=0;
         return copy;
       });
 
       return;
     }
 
-    if (mode === "destination") {
-      if (start?.row === row && start?.col === col) return;
+    if(mode==="destination"){
+      if(start?.row===row&&start?.col===col)return;
 
-      setDestination({ row, col });
+      setDestination({row,col});
 
-      setGrid((prev) => {
-        const copy = prev.map((r) => [...r]);
-        copy[row][col] = 0;
+      setGrid(prev=>{
+        const copy=prev.map(r=>[...r]);
+        copy[row][col]=0;
         return copy;
       });
 
       return;
     }
 
-    if (start?.row === row && start?.col === col) return;
-    if (destination?.row === row && destination?.col === col) return;
+    if(start?.row===row&&start?.col===col)return;
+    if(destination?.row===row&&destination?.col===col)return;
 
-    setGrid((prev) => {
-      const copy = prev.map((r) => [...r]);
-      copy[row][col] = copy[row][col] === 1 ? 0 : 1;
+    setGrid(prev=>{
+      const copy=prev.map(r=>[...r]);
+      copy[row][col]=copy[row][col]===1?0:1;
       return copy;
     });
 
@@ -80,11 +80,11 @@ function App() {
     setMessage("");
   };
 
-  const sleep = (ms) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep=ms=>
+    new Promise(resolve=>setTimeout(resolve,ms));
 
-  const runDFS = async () => {
-    if (!start || !destination) {
+  const runDFS=async()=>{
+    if(!start||!destination){
       setMessage("Set both Start and Destination first.");
       return;
     }
@@ -94,53 +94,53 @@ function App() {
     setPath([]);
     setMessage("🧠 DFS is searching...");
 
-    const visitedSet = new Set();
-    const currentPath = [];
-    let finalPath = [];
+    const visitedSet=new Set();
+    const currentPath=[];
+    let finalPath=[];
 
-    const directions = [
-      [1, 0],
-      [0, 1],
-      [-1, 0],
-      [0, -1],
+    const directions=[
+      [1,0],
+      [0,1],
+      [-1,0],
+      [0,-1]
     ];
 
-    const dfs = async (row, col) => {
-      if (
-        row < 0 ||
-        row >= rows ||
-        col < 0 ||
-        col >= cols ||
-        grid[row][col] === 1
-      ) {
+    const dfs=async(row,col)=>{
+      if(
+        row<0||
+        row>=rows||
+        col<0||
+        col>=cols||
+        grid[row][col]===1
+      ){
         return false;
       }
 
-      const key = `${row}-${col}`;
+      const key=`${row}-${col}`;
 
-      if (visitedSet.has(key)) {
+      if(visitedSet.has(key)){
         return false;
       }
 
       visitedSet.add(key);
-      currentPath.push({ row, col });
+      currentPath.push({row,col});
 
       setVisited([...visitedSet]);
 
       await sleep(250);
 
-      if (
-        row === destination.row &&
-        col === destination.col
-      ) {
-        finalPath = [...currentPath];
+      if(
+        row===destination.row&&
+        col===destination.col
+      ){
+        finalPath=[...currentPath];
         return true;
       }
 
-      for (const [dr, dc] of directions) {
-        const found = await dfs(row + dr, col + dc);
+      for(const [dr,dc] of directions){
+        const found=await dfs(row+dr,col+dc);
 
-        if (found) {
+        if(found){
           return true;
         }
       }
@@ -152,41 +152,41 @@ function App() {
       return false;
     };
 
-    const found = await dfs(start.row, start.col);
+    const found=await dfs(start.row,start.col);
 
-    if (found) {
+    if(found){
       setPath(finalPath);
       setMessage("🎉 Destination reached!");
-    } else {
+    }else{
       setMessage("❌ No path exists");
     }
 
     setRunning(false);
   };
 
-  const resetSearch = () => {
-    if (running) return;
+  const resetSearch=()=>{
+    if(running)return;
 
     setVisited([]);
     setPath([]);
     setMessage("");
   };
 
-  const isStart = (row, col) =>
-    start?.row === row && start?.col === col;
+  const isStart=(row,col)=>
+    start?.row===row&&start?.col===col;
 
-  const isDestination = (row, col) =>
-    destination?.row === row && destination?.col === col;
+  const isDestination=(row,col)=>
+    destination?.row===row&&destination?.col===col;
 
-  const isVisited = (row, col) =>
+  const isVisited=(row,col)=>
     visited.includes(`${row}-${col}`);
 
-  const isPath = (row, col) =>
+  const isPath=(row,col)=>
     path.some(
-      (cell) => cell.row === row && cell.col === col
+      cell=>cell.row===row&&cell.col===col
     );
 
-  return (
+  return(
     <div className="app">
 
       <header>
@@ -198,51 +198,68 @@ function App() {
 
         <div className="input-group">
           <label>Rows</label>
+
           <input
             type="number"
             min="2"
             max="10"
             value={rows}
             disabled={running}
-            onChange={(e) => setRows(e.target.value)}
+            onChange={e=>{
+              const value=Math.min(
+                Math.max(Number(e.target.value),2),
+                10
+              );
+              setRows(value);
+            }}
           />
         </div>
 
         <div className="input-group">
           <label>Columns</label>
+
           <input
             type="number"
             min="2"
             max="10"
             value={cols}
             disabled={running}
-            onChange={(e) => setCols(e.target.value)}
+            onChange={e=>{
+              const value=Math.min(
+                Math.max(Number(e.target.value),2),
+                10
+              );
+              setCols(value);
+            }}
           />
         </div>
 
-        <button onClick={createGrid} disabled={running}>
+        <button
+          onClick={createGrid}
+          disabled={running}
+        >
           🗺️ Create Maze
         </button>
 
         <button
-          className={mode === "wall" ? "active" : ""}
-          onClick={() => setMode("wall")}
+          className={mode==="wall"?"active":""}
+          onClick={()=>setMode("wall")}
           disabled={running}
         >
           🧱 Walls
         </button>
 
         <button
-          className={mode === "start" ? "active" : ""}
-          onClick={() => setMode("start")}
+          className={mode==="start"?"active":""}
+          onClick={()=>setMode("start")}
           disabled={running}
         >
           🧑 Start
         </button>
 
         <button
-          className={mode === "destination" ? "active" : ""}
-          onClick={() => setMode("destination")}
+          className={mode==="destination"?"active":""}
+          onClick={()=>setMode("destination")}
           disabled={running}
         >
           🏁 Goal
@@ -256,7 +273,10 @@ function App() {
           ▶ Run DFS
         </button>
 
-        <button onClick={resetSearch} disabled={running}>
+        <button
+          onClick={resetSearch}
+          disabled={running}
+        >
           ↻ Reset
         </button>
 
@@ -271,42 +291,42 @@ function App() {
         <div
           className="maze"
           style={{
-            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gridTemplateColumns:`repeat(${cols},1fr)`
           }}
         >
 
-          {grid.map((row, r) =>
-            row.map((cell, c) => {
+          {grid.map((row,r)=>
+            row.map((cell,c)=>{
 
-              const classes = [
+              const classes=[
                 "cell",
-                cell === 1 ? "wall" : "",
-                isVisited(r, c) ? "visited" : "",
-                isPath(r, c) ? "final-path" : "",
-                isStart(r, c) ? "start" : "",
-                isDestination(r, c) ? "destination" : "",
+                cell===1?"wall":"",
+                isVisited(r,c)?"visited":"",
+                isPath(r,c)?"final-path":"",
+                isStart(r,c)?"start":"",
+                isDestination(r,c)?"destination":""
               ].join(" ");
 
-              return (
+              return(
                 <div
                   key={`${r}-${c}`}
                   className={classes}
-                  onClick={() => handleCellClick(r, c)}
+                  onClick={()=>handleCellClick(r,c)}
                 >
 
-                  {isStart(r, c) && (
+                  {isStart(r,c)&&(
                     <div className="character">
                       🧑
                     </div>
                   )}
 
-                  {isDestination(r, c) && (
+                  {isDestination(r,c)&&(
                     <div className="goal">
                       🏁
                     </div>
                   )}
 
-                  {cell === 1 && (
+                  {cell===1&&(
                     <div className="brick">
                       <span>🧱</span>
                     </div>
@@ -324,10 +344,11 @@ function App() {
           <h2>🧠 DFS</h2>
 
           <div className="status">
-            {message || "Waiting for maze..."}
+            {message||"Waiting for maze..."}
           </div>
 
           <div className="stats">
+
             <div>
               <span>Visited</span>
               <strong>{visited.length}</strong>
@@ -337,6 +358,7 @@ function App() {
               <span>Path</span>
               <strong>{path.length}</strong>
             </div>
+
           </div>
 
           <div className="legend">
